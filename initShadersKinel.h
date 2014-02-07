@@ -77,31 +77,32 @@ const GLchar* inputShader(const char* filename){
 //creates the shader
 GLuint createShader(GLenum type, const GLchar* source){
   
-  GLuint shader = glCreateShader(type);//create shader based on type GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
-  glShaderSource(shader, 1, &source, NULL);//loads the source code of the file into the shader
+  GLuint shader = glCreateShader(type);
+  glShaderSource(shader, 1, &source, NULL);
+  //compiles
+  glCompileShader(shader);
   
-  glCompileShader(shader);//compiles a shader object
+  GLint compileStatus;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
   
-  GLint compileStatus;//status of the compilation variable
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);//returns the comiple status into the variable
-  
-  if(!compileStatus){//checks to see if the shader compiled
-    GLint logSize;//variable for size of the debug info
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);//returns the size of the the source file into the variable
+  //sees if compiled
+  if(!compileStatus){
+    GLint logSize;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
     
-    GLchar* infoLog = new GLchar[logSize+1];//allocating memory for the debug info
-    glGetShaderInfoLog(shader,logSize,&logSize,infoLog);//returns the error messages into the variable infoLog
+    GLchar* infoLog = new GLchar[logSize+1];
+    glGetShaderInfoLog(shader,logSize,&logSize,infoLog);
     
-    const char *info= NULL;//char array for what shader that is having an error
-    switch(type){//way to get what shader has the error
+    const char *info= NULL;
+    switch(type){
       case GL_VERTEX_SHADER: info = "vertex"; break;
       case GL_GEOMETRY_SHADER_EXT: info = "geometric"; break;
       case GL_FRAGMENT_SHADER: info = "fragment"; break;
     }
-    fprintf(stderr,"\nCompile failure in %u shader: %s\n Error message:\n%s\n",type,info,infoLog);//prints information need to debug shaders
-    delete[] infoLog;//memory management
+    fprintf(stderr,"\nCompile failure in %u shader: %s\n Error message:\n%s\n",type,info,infoLog);
+    delete[] infoLog;
   }
-  return shader;//self explanatory
+  return shader;
 }
 
 //creates the shading program
