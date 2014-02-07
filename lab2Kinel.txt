@@ -1,0 +1,7 @@
+the header does the following:
+-opens & read the file
+-closes the file
+-creates the shader & compiles
+-creates the shader program
+-binds location to the program
+-links the program to the program
